@@ -24,6 +24,7 @@
 		DB4C350228F7FA20007D9E89 /* ServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4C350128F7FA20007D9E89 /* ServiceError.swift */; };
 		DB5172ED28FAEF97009E13A6 /* WeatherAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5172EC28FAEF97009E13A6 /* WeatherAPIManager.swift */; };
 		DB5172EF28FC8C09009E13A6 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5172EE28FC8C09009E13A6 /* StringExtensions.swift */; };
+		DBADA25628FFA8C600269A65 /* ForecastCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBADA25528FFA8C600269A65 /* ForecastCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		DB4C350128F7FA20007D9E89 /* ServiceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceError.swift; sourceTree = "<group>"; };
 		DB5172EC28FAEF97009E13A6 /* WeatherAPIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAPIManager.swift; sourceTree = "<group>"; };
 		DB5172EE28FC8C09009E13A6 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
+		DBADA25528FFA8C600269A65 /* ForecastCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 		DB4C34E228F7DE20007D9E89 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				DBADA25528FFA8C600269A65 /* ForecastCollectionViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -235,6 +238,7 @@
 				DB4C34F028F7EFD3007D9E89 /* LocationManager.swift in Sources */,
 				DB4C34CF28F7DAED007D9E89 /* AppDelegate.swift in Sources */,
 				DB4C34D128F7DAED007D9E89 /* SceneDelegate.swift in Sources */,
+				DBADA25628FFA8C600269A65 /* ForecastCollectionViewCell.swift in Sources */,
 				DB4C34F828F7F2CA007D9E89 /* Observable.swift in Sources */,
 				DB4C34F628F7F243007D9E89 /* LocationError.swift in Sources */,
 				DB4C34ED28F7EF46007D9E89 /* Coordinate.swift in Sources */,

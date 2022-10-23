@@ -8,7 +8,7 @@
 import Foundation
 
 class WeatherAPIParams {
-    // static let forecastURL = "https://api.openweathermap.org/data/2.5/forecast"
+    static let forecastURL = "https://api.openweathermap.org/data/2.5/forecast"
     static let currentWeatherURL = "https://api.openweathermap.org/data/2.5/weather"
     static let appID = "2c46d614284b48109216eab769049f3d"
     static let lang = "kr"

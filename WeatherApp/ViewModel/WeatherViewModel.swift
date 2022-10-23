@@ -13,17 +13,31 @@ class WeatherViewModel {
     var location: Observable<Location>
     var weather: Observable<Weather>
     var main: Observable<Main>
+    var hourlyData: Observable<[List]>
     
     init(location: Location) {
         self.location = Observable(location)
         self.weather = Observable(nil)
         self.main = Observable(nil)
+        self.hourlyData = Observable([])
+    }
+    
+    func retrieveForecastData() {
+        guard let location = self.location.value else { return }
+        
+        weatherApiManager.requestForecastData(location: location) { forecast, error in
+            guard let forecastData = forecast, error == nil else {
+                print(error ?? "")
+                return
+            }
+            DispatchQueue.main.async {
+                self.update(forecastData: forecastData)
+            }
+        }
     }
     
     func retrieveWeatherData() {
-        guard let location = location.value else {
-            return
-        }
+        guard let location = self.location.value else { return }
         
         weatherApiManager.requestWeatherData(location: location) { weather, error in
             guard let weatherData = weather, error == nil else {
@@ -41,6 +55,13 @@ class WeatherViewModel {
     func update(weatherData: WeatherData) {
         self.weather.value = weatherData.weather?.first
         self.main.value = weatherData.main
+    }
+    
+    func update(forecastData: ForecastData) {
+        guard let currentWeather = forecastData.list?.first else { return }
+        self.weather.value = currentWeather.weather?.first
+        self.main.value = currentWeather.main
+        self.hourlyData.value = forecastData.list
     }
     
 }

@@ -5,8 +5,8 @@
 //  Created by 문철현 on 2022/10/13.
 //
 // ViewModel <-> Observable 객체와 데이터 주고받는 방식(순서) 제대로 분석하기
-// 1. 날씨 정보 가져오는 API 호출 작동 여부 체크
-// 2. 모델 체크
+// 1. Forecast API 추가 (APIManager, Model)
+// 2. CollectionView 작성
 
 import UIKit
 import CoreLocation
@@ -57,10 +57,12 @@ class WeatherViewController: UIViewController {
                 
             }
             viewModel.main.observe { [unowned self] in
-                guard $0.temp != nil else {
-                    return
-                }
+                guard $0.temp != nil else { return }
                 self.temperatureLabel.text = $0.getTempString()
+            }
+            viewModel.hourlyData.observe { [unowned self] in
+                guard !$0.isEmpty else { return }
+                print("is working")
             }
         }
     }
@@ -71,10 +73,19 @@ class WeatherViewController: UIViewController {
         self.locationManager.delegate = self
         self.locationManager.requestCurrentLocation()
         
-        self.getWeatherData()
+        self.getForecastData()
     }
     
-    private func getWeatherData() {
+    private func getForecastData() {
+        guard let location = self.location else {
+            print(LocationError.noLocationConfigured.localizedDescription)
+            return
+        }
+        self.viewModel = WeatherViewModel(location: location)
+        self.viewModel?.retrieveForecastData()
+    }
+    
+    private func getCurrentWeatherData() {
         guard let location = self.location else {
             print(LocationError.noLocationConfigured.localizedDescription)
             return

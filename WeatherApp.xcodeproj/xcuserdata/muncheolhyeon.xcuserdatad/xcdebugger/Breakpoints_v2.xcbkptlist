@@ -142,9 +142,9 @@
             filePath = "WeatherApp/ViewController/WeatherViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
-            landmarkName = "getWeatherData()"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
+            landmarkName = "getCurrentWeatherData()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -158,8 +158,8 @@
             filePath = "WeatherApp/ViewModel/WeatherViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
             landmarkName = "retrieveWeatherData()"
             landmarkType = "7">
          </BreakpointContent>
