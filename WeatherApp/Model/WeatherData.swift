@@ -33,6 +33,12 @@ struct List: Codable {
     let coord: Coord?
     let weather: [Weather]?
     let main: Main?
+    
+    enum CodingKeys: String, CodingKey {
+        case dt
+        case dtTxt = "dt_txt"
+        case coord, weather, main
+    }
 }
 
 struct Coord: Codable {

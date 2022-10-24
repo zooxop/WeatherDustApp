@@ -5,8 +5,9 @@
 //  Created by 문철현 on 2022/10/13.
 //
 // ViewModel <-> Observable 객체와 데이터 주고받는 방식(순서) 제대로 분석하기
-// 1. Forecast API 추가 (APIManager, Model)
-// 2. CollectionView 작성
+
+// 1. view 나누기
+// 2. table view -> collection view로 바꾸기
 
 import UIKit
 import CoreLocation
@@ -30,6 +31,9 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var statusImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
+    @IBOutlet weak var hourlyCollectionView: UICollectionView!
+    
+    @IBOutlet weak var backgroundView: UIView!
     
     private var locationManager = LocationManager()
     
@@ -60,10 +64,10 @@ class WeatherViewController: UIViewController {
                 guard $0.temp != nil else { return }
                 self.temperatureLabel.text = $0.getTempString()
             }
-            viewModel.hourlyData.observe { [unowned self] in
-                guard !$0.isEmpty else { return }
-                print("is working")
+            viewModel.hourlyData.observe { [unowned self] _ in
+                self.hourlyCollectionView.reloadData()
             }
+            
         }
     }
 
@@ -73,7 +77,17 @@ class WeatherViewController: UIViewController {
         self.locationManager.delegate = self
         self.locationManager.requestCurrentLocation()
         
+        self.hourlyCollectionView.delegate = self
+        self.hourlyCollectionView.dataSource = self
+        self.hourlyCollectionView.register(UINib(nibName: "ForecastCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: "ForecastCollectionViewCell")
+        
         self.getForecastData()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        self.hourlyCollectionView.layer.addBorder([.bottom], color: UIColor.black, width: 1.0)
     }
     
     private func getForecastData() {
@@ -99,4 +113,28 @@ class WeatherViewController: UIViewController {
 }
 
 
-
+extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        return viewModel?.hourlyData.value?.count ?? 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ForecastCollectionViewCell", for: indexPath) as! ForecastCollectionViewCell
+        
+        guard let tempInfo = self.viewModel?.hourlyData.value?[indexPath.row] else {
+            return ForecastCollectionViewCell()
+        }
+        
+        cell.timeLabel.text = tempInfo.dtTxt?.hourlyTime
+        cell.tempLabel.text = tempInfo.main?.getTempString()
+        
+        if let icon = tempInfo.weather?.first?.icon?.iconName {
+            cell.weatherImageView.image = UIImage(named: icon) ?? UIImage()
+        }
+        
+        return cell
+    }
+    
+    
+}

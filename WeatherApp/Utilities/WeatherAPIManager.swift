@@ -93,8 +93,9 @@ class WeatherAPIManager {
         let appId = URLQueryItem(name: "appid", value: WeatherAPIParams.appID)
         let lang = URLQueryItem(name: "lang", value: WeatherAPIParams.lang)
         let units = URLQueryItem(name: "units", value: WeatherAPIParams.units)
+        let cnt = URLQueryItem(name: "cnt", value: WeatherAPIParams.cnt)
         
-        url?.queryItems = [latitude, longitude, appId, lang, units]
+        url?.queryItems = [latitude, longitude, appId, lang, units, cnt]
         
         return url?.url
     }
