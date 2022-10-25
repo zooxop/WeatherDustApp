@@ -7,16 +7,11 @@
 
 import Foundation
 
-protocol APIManagable: AnyObject {
-    // func requestData(with item: Any?, completion: @escaping (Data?, Error?) -> Void)
-}
-
 class WeatherAPIManager {
     typealias WeatherCompletion = (WeatherData?, Error?) -> Void
     typealias ForecastCompletion = (ForecastData?, Error?) -> Void
     
     public static let shared = WeatherAPIManager()
-    weak var delegate: APIManagable?
     
     public func requestWeatherData(location: Location, completion: @escaping WeatherCompletion ) {
         guard let url = self.getCurrentWeatherURL(location: location) else {

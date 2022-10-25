@@ -8,10 +8,6 @@
 import Foundation
 
 extension String {
-    var iconName: String {
-        let idx = self.index(self.startIndex, offsetBy: 2)
-        return String(self[self.startIndex ..< idx])
-    }
     
     var hourlyTime: String {
         let dateFormatter = DateFormatter()

@@ -32,8 +32,7 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var statusImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var hourlyCollectionView: UICollectionView!
-    
-    @IBOutlet weak var backgroundView: UIView!
+    @IBOutlet weak var dailyCollectionView: UICollectionView!
     
     private var locationManager = LocationManager()
     
@@ -56,7 +55,7 @@ class WeatherViewController: UIViewController {
                 }
                 if let icon = $0.icon {
                     // icon 이름으로 assets에서 이미지 가져오기
-                    self.statusImageView.image = UIImage(named: icon.iconName) ?? UIImage()
+                    self.statusImageView.image = UIImage(named: icon) ?? UIImage()
                 }
                 
             }
@@ -66,6 +65,9 @@ class WeatherViewController: UIViewController {
             }
             viewModel.hourlyData.observe { [unowned self] _ in
                 self.hourlyCollectionView.reloadData()
+            }
+            viewModel.dailyData.observe { [unowned self] _ in
+                self.dailyCollectionView.reloadData()
             }
             
         }
@@ -81,13 +83,17 @@ class WeatherViewController: UIViewController {
         self.hourlyCollectionView.dataSource = self
         self.hourlyCollectionView.register(UINib(nibName: "ForecastCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: "ForecastCollectionViewCell")
         
+        self.dailyCollectionView.delegate = self
+        self.dailyCollectionView.dataSource = self
+        self.dailyCollectionView.register(UINib(nibName: "DailyCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: "DailyCollectionViewCell")
+        
         self.getForecastData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        self.hourlyCollectionView.layer.addBorder([.bottom], color: UIColor.black, width: 1.0)
+        // self.hourlyCollectionView.layer.addBorder([.bottom], color: UIColor.black, width: 1.0)
     }
     
     private func getForecastData() {
@@ -108,33 +114,67 @@ class WeatherViewController: UIViewController {
         self.viewModel?.retrieveWeatherData()
         print(location.coordinate)
     }
-
     
 }
 
 
 extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-        return viewModel?.hourlyData.value?.count ?? 0
+        if collectionView == hourlyCollectionView {
+            if viewModel?.hourlyData.value?.count ?? 0 > 0 {
+                return viewModel?.maxHourlyItemCnt ?? 0
+            } else {
+                return 0
+            }
+        } else if collectionView == dailyCollectionView {
+            return viewModel?.dailyData.value?.count ?? 0
+        }
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ForecastCollectionViewCell", for: indexPath) as! ForecastCollectionViewCell
         
-        guard let tempInfo = self.viewModel?.hourlyData.value?[indexPath.row] else {
-            return ForecastCollectionViewCell()
+        if collectionView == hourlyCollectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ForecastCollectionViewCell", for: indexPath) as! ForecastCollectionViewCell
+            
+            guard let tempInfo = self.viewModel?.hourlyData.value?[indexPath.row] else {
+                return ForecastCollectionViewCell()
+            }
+            
+            cell.timeLabel.text = tempInfo.dtTxt?.hourlyTime
+            cell.tempLabel.text = tempInfo.main?.getTempString()
+            
+            if let icon = tempInfo.weather?.first?.icon {
+                cell.weatherImageView.image = UIImage(named: icon) ?? UIImage()
+            }
+        
+            return cell
+            
+        } else if collectionView == dailyCollectionView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DailyCollectionViewCell", for: indexPath) as! DailyCollectionViewCell
+            
+            if let data = self.viewModel?.dailyData.value?[indexPath.row] {
+                cell.dateLabel.text = data.dateTextMMDD
+                cell.minMaxTempLabel.text = data.minMaxTemp
+                cell.repIconImageView.image = data.icon
+                return cell
+            } else {
+                return DailyCollectionViewCell()
+            }
         }
         
-        cell.timeLabel.text = tempInfo.dtTxt?.hourlyTime
-        cell.tempLabel.text = tempInfo.main?.getTempString()
-        
-        if let icon = tempInfo.weather?.first?.icon?.iconName {
-            cell.weatherImageView.image = UIImage(named: icon) ?? UIImage()
-        }
-        
-        return cell
+        return ForecastCollectionViewCell()
     }
-    
-    
+}
+
+extension WeatherViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if collectionView == self.dailyCollectionView {
+            return CGSize(width: self.view.bounds.width - 10, height: 30)
+        } else {
+            let cgSize = collectionView.cellForItem(at: indexPath)?.bounds.size
+            return cgSize ?? CGSize(width: 67.0, height: 104.0)
+        }
+        
+    }
 }
